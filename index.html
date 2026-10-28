@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14161d">
+  <meta name="description" content="¡Acelera a fondo! Alejandro cumple 2 años y te invita a la carrera más divertida.">
+  <title>¡Alejandro cumple 2! Gran Premio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&family=Lilita+One&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Fondo: asfalto, luces de estadio y pista sinuosa -->
+  <div class="scene backdrop" aria-hidden="true">
+    <div class="glow glow-blue"></div>
+    <div class="glow glow-red"></div>
+    <div class="asphalt-grain"></div>
+    <div class="track">
+      <svg viewBox="0 0 1000 2000" preserveAspectRatio="xMidYMin slice">
+        <path id="bg-road" d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#fff" stroke-width="190"/>
+        <path d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#ff2d2d" stroke-width="190" stroke-dasharray="40 40"/>
+        <path d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#2c3142" stroke-width="160"/>
+        <path class="road-line" d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#ffd400" stroke-width="8" stroke-dasharray="46 40"/>
+      </svg>
+    </div>
+    <div class="glow glow-gold"></div>
+  </div>
+
+  <!-- Pianos (bordillos) y bandera a cuadros en los laterales -->
+  <div class="scene kerbs" aria-hidden="true">
+    <div class="kerb kerb-left"><div class="stripes"><i></i></div><div class="checks"><i></i></div></div>
+    <div class="kerb kerb-right"><div class="stripes"><i></i></div><div class="checks"><i></i></div></div>
+  </div>
+
+  <div class="scene runners" aria-hidden="true"></div>
+
+  <div class="stage">
+  <main class="page">
+    <header class="hero">
+      <div class="gantry" aria-hidden="true">
+        <div class="lights">
+          <span class="lamp red"></span><span class="lamp yellow"></span><span class="lamp green"></span>
+        </div>
+        <span class="go">¡YA!</span>
+      </div>
+      <br>
+      <p class="badge">¡Acelera a fondo, estás invitado a mi cumpleaños!</p>
+      <h1 class="name" id="name" aria-label="Alejandro">Alejandro</h1>
+      <p class="cumple">¡cumple</p>
+      <div class="number-zone" aria-hidden="true">
+        <div class="number-glow"></div>
+        <div class="roundel"><span class="two">2</span></div>
+        <div class="confetti" id="confetti"></div>
+      </div>
+      <p class="years">¡años!</p>
+      <p class="intro reveal"><strong>¡Prepárate para la carrera de mi vida!</strong>Ven a acelerar y divertirte conmigo en una tarde llena de juegos, velocidad y mucha alegría.</p>
+    </header>
+
+    <div class="checker-strip reveal" aria-hidden="true"></div>
+    <h2 class="section-title reveal">¿Cuándo y dónde es la carrera?</h2>
+    <section class="details" aria-label="Detalles de la fiesta">
+      <div class="card reveal">
+        <span class="card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.4"/><path d="M3.5 10.5c3 .8 5.5 1.3 6.2 1.5M20.5 10.5c-3 .8-5.5 1.3-6.2 1.5M12 14.4V21"/></svg>
+        </span>
+        <span class="card-label">Fecha</span>
+        <span class="card-value">Domingo<br>22 de noviembre</span>
+      </div>
+      <div class="card reveal">
+        <span class="card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="8"/><path d="M12 10v4l2.5 1.5M10 2h4M12 2v4M19 6l1.5-1.5"/></svg>
+        </span>
+        <span class="card-label">Hora de salida</span>
+        <span class="card-value">3:00 PM</span>
+        <span class="card-note">¡Motores encendidos!</span>
+      </div>
+      <div class="card pitstop reveal">
+        <span class="pit-sign">PIT STOP</span>
+        <div class="pitstop-inner">
+          <span class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.6"/></svg>
+          </span>
+          <span class="card-label">Zona de meta</span>
+          <span class="card-value">Magic Place</span>
+          <span class="card-note">Apartamentos Céntrico</span>
+          <p class="address">30 Calle 28-49, colonia Santa Ana,<br>zona 5 capitalina</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="notice reveal">
+      <span class="notice-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="8"/><path d="M12 10v4l2.5 1.5M10 2h4"/></svg>
+      </span>
+      <span><strong>¡Puntualidad en la parrilla de salida!</strong>La carrera comienza a la hora indicada. En caso de asistir, se ruega la puntualidad dado que se cuenta con un tiempo limitado para el uso del espacio.</span>
+    </p>
+
+    <p class="notice rsvp-deadline reveal">
+      <span class="notice-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4"/></svg>
+      </span>
+      <span><strong>¡Confirma tu lugar en la carrera!</strong>Por favor confirma tu asistencia antes del 10 de noviembre.</span>
+    </p>
+
+    <div class="actions reveal">
+      <button class="btn btn-map" id="location-button" type="button">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.6"/></svg></span>
+        <span>Ver ubicación</span>
+      </button>
+      <button class="btn btn-rsvp" id="rsvp-button" type="button">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h13l-3 4 3 4H5"/></svg></span>
+        <span>Confirmar asistencia</span>
+      </button>
+    </div>
+
+    <div class="checker-strip reveal" aria-hidden="true"></div>
+
+    <footer class="closing reveal">
+      <div class="flags" aria-hidden="true"></div>
+      <p class="closing-text">Esperamos contar con tu presencia en la pista</p>
+      <p class="thanks">¡Muchas Gracias!</p>
+      <svg class="trophy" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="#ffd400" stroke="#111" stroke-width="3"/>
+        <path d="M18 12H9c0 10 4 14 10 14M46 12h9c0 10-4 14-10 14" fill="none" stroke="#111" stroke-width="3"/>
+        <path d="M28 36h8v10h-8z" fill="#c9a300" stroke="#111" stroke-width="3"/>
+        <rect x="18" y="46" width="28" height="9" rx="2" fill="#ff2d2d" stroke="#111" stroke-width="3"/>
+        <path d="M32 13l2 4.5 5 .5-3.8 3.3 1.1 4.9L32 23.6l-4.3 2.6 1.1-4.9L25 18l5-.5z" fill="#fff"/>
+      </svg>
+    </footer>
+  </main>
+  </div>
+
+  <!-- Banderines arriba, destellos y línea de meta abajo (por encima del contenido) -->
+  <div class="scene bunting" aria-hidden="true"><div class="checker-bar"></div></div>
+  <div class="scene sparks" aria-hidden="true"></div>
+  <div class="scene finish" aria-hidden="true">
+    <div class="finish-floor"></div>
+    <span class="finish-word">META</span>
+  </div>
+
+  <dialog id="map-dialog" aria-labelledby="map-title">
+    <h2 id="map-title">¿Cuál es tu ruta?</h2>
+    <p>Elige tu aplicación de mapas favorita</p>
+    <nav class="map-options" aria-label="Aplicaciones de mapas">
+      <a class="opt-google" href="https://maps.app.goo.gl/tpK1xGdTqgEz1wPb7" target="_blank" rel="noopener noreferrer">Google Maps</a>
+      <a class="opt-waze" href="https://waze.com/ul?q=30%20Calle%2028-49%2C%20Zona%205%2C%20Ciudad%20de%20Guatemala&navigate=yes" target="_blank" rel="noopener noreferrer">Waze</a>
+      <a class="opt-apple" href="https://maps.apple.com/?q=Magic%20Place&address=30%20Calle%2028-49%2C%20Zona%205%2C%20Ciudad%20de%20Guatemala" target="_blank" rel="noopener noreferrer">Apple Maps</a>
+    </nav>
+    <button class="dialog-close" type="button" data-close>Cerrar</button>
+  </dialog>
+
+  <dialog id="rsvp-dialog" aria-labelledby="rsvp-title">
+    <h2 id="rsvp-title">¡Lugar en la parrilla asegurado! 🏁</h2>
+    <p>Gracias por confirmar. ¡Alejandro está feliz de correr contigo!</p>
+    <button class="dialog-close" type="button" data-close>Cerrar</button>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="js/main.js" ></script>
+</body>
+</html>

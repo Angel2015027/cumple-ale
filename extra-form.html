@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14161d">
+  <meta name="description" content="Comparte tus comentarios para la carrera de cumpleaños de Alejandro.">
+  <title>Comentarios de invitados | Gran Premio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&family=Lilita+One&display=swap" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <link href="css/guest-comments.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Escenografía compartida con la invitación original -->
+  <div class="scene backdrop" aria-hidden="true">
+    <div class="glow glow-blue"></div>
+    <div class="glow glow-red"></div>
+    <div class="asphalt-grain"></div>
+    <div class="track">
+      <svg viewBox="0 0 1000 2000" preserveAspectRatio="xMidYMin slice">
+        <path d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#fff" stroke-width="190"/>
+        <path d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#ff2d2d" stroke-width="190" stroke-dasharray="40 40"/>
+        <path d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#2c3142" stroke-width="160"/>
+        <path class="road-line" d="M500 -80C930 220 80 520 500 840S940 1460 500 1760 80 2080 500 2200" fill="none" stroke="#ffd400" stroke-width="8" stroke-dasharray="46 40"/>
+      </svg>
+    </div>
+    <div class="glow glow-gold"></div>
+  </div>
+
+  <div class="scene kerbs" aria-hidden="true">
+    <div class="kerb kerb-left"><div class="stripes"><i></i></div><div class="checks"><i></i></div></div>
+    <div class="kerb kerb-right"><div class="stripes"><i></i></div><div class="checks"><i></i></div></div>
+  </div>
+  <div class="scene bunting" aria-hidden="true">
+    <div class="checker-bar"></div>
+    <svg viewBox="0 0 1000 130" preserveAspectRatio="none">
+      <path d="M0 0 Q250 90 500 0 T1000 0" fill="none" stroke="#c9ced9" stroke-width="2"/>
+      <path d="M0 0 Q250 90 500 0 T1000 0" fill="none" stroke="#c9ced9" stroke-width="2" transform="translate(-100 22)"/>
+      <path d="M100 14l28 0-14 35zM210 37l28 0-14 35zM320 45l28 0-14 35zM430 38l28 0-14 35zM540 18l28 0-14 35zM650 0l28 0-14 35zM760 0l28 0-14 35zM870 0l28 0-14 35z" fill="#ff2d2d" stroke="#111" stroke-width="2"/>
+      <path d="M90 42l24 0-12 30zM200 60l24 0-12 30zM310 68l24 0-12 30zM420 62l24 0-12 30zM530 45l24 0-12 30zM640 24l24 0-12 30zM750 0l24 0-12 30zM860 0l24 0-12 30z" fill="#ffd400" stroke="#111" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <div class="stage">
+    <main class="page guest-page">
+      <header class="comment-hero">
+        <div class="gantry" aria-hidden="true">
+          <div class="lights">
+            <span class="lamp red"></span><span class="lamp yellow"></span><span class="lamp green on"></span>
+          </div>
+          <span class="go">¡YA!</span>
+        </div>
+        <p class="badge">¡Tu opinión también corre con nosotros!</p>
+        <h1 class="section-title">Buzón de comentarios</h1>
+        <p class="comment-intro">¿Tienes una sugerencia, petición o algo que quieras compartir? ¡Te leemos!</p>
+      </header>
+
+      <div class="checker-strip" aria-hidden="true"></div>
+
+      <section class="comment-panel" aria-labelledby="form-title">
+        <div class="panel-top" aria-hidden="true"><span>BOX BOX</span></div>
+        <h2 id="form-title" class="panel-title">Deja tu mensaje</h2>
+        <p class="panel-copy">Cuéntanos lo que tienes en mente para la carrera.</p>
+
+        <form id="guest-comment-form" class="comment-form">
+          <div class="form-field">
+            <label for="guest-name">Tu nombre <span aria-hidden="true">*</span></label>
+            <input id="guest-name" name="name" type="text" autocomplete="name" placeholder="¿Cómo te llamas?" required>
+          </div>
+
+          <div class="form-field">
+            <label for="guest-comment">Comentario</label>
+            <textarea id="guest-comment" name="comment" rows="6" placeholder="Escribe aquí tu comentario, observación, sugerencia o petición..."></textarea>
+          </div>
+
+          <button class="btn btn-send" type="submit">
+            <span>Enviar</span>
+          </button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <p class="notice comment-note">
+        <span class="notice-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.6"/></svg>
+        </span>
+        <span><strong>¡Gracias por pasar por boxes!</strong>Tu mensaje quedará listo para conectarse con el equipo de la carrera.</span>
+      </p>
+
+      <footer class="comment-footer">
+        <div class="footer-checkers" aria-hidden="true"></div>
+        <p>¡Nos vemos en la pista!</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="scene finish" aria-hidden="true">
+    <div class="finish-floor"></div>
+    <span class="finish-word">META</span>
+  </div>
+
+  <script src="js/guest-comments.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f6fb">
+  <title>Enviar código</title>
+  <link rel="stylesheet" href="css/callback.css">
+  <script src="js/callback.js" defer></script>
+</head>
+<body>
+  <!-- HTML Structure: modifica aquí los elementos del formulario. -->
+  <main class="page">
+    <section id="form-view" class="form-card" aria-label="Formulario de envío de código">
+      <form id="code-form" class="code-form">
+        <label for="code-input" class="field-label">Código</label>
+        <input
+          id="code-input"
+          name="code"
+          class="code-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button class="submit-button" type="submit">Enviar</button>
+      </form>
+    </section>
+
+    <section
+      id="not-found-view"
+      class="not-found-card"
+      aria-labelledby="not-found-title"
+      hidden
+    >
+      <p class="error-code">404</p>
+      <h1 id="not-found-title">Page Not Found</h1>
+      <p class="error-message">No se encontró la página que estás buscando.</p>
+    </section>
+  </main>
+</body>
+</html>
