@@ -13,7 +13,7 @@ function sendCodeToApi(code) {
   console.log("Código listo para enviar:", code);
 
   if (code === 'p01') {
-    window.location.href = `index.html?c0de=${code}`;
+    window.location.href = `index.html?c0d3=${code}`;
     return;
   }
 

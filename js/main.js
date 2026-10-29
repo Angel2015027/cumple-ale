@@ -3,46 +3,62 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el parámetro 'c0d3' de la URL
     const urlParams = new URLSearchParams(window.location.search);
     const inviteCode = urlParams.get("c0d3");
+    const invitedData = {}
 
     // 2. Si no hay código en la URL, redirigir a la página callback
     if (!inviteCode) {
+        console.error('Sin codigo de invitación')
         window.location.href = "callback.html";
         return;
     }
 
-    // // 3. Validar el código con el API externo
-    // try {
-    //     const response = await fetch(`https://tu-api-externa.com/api/validar?code=${inviteCode}`, {
-    //         method: "GET", // o POST según tu API
-    //         headers: { "Content-Type": "application/json" }
-    //     });
+    // 3. Validar el código con el API externo
+    try {
+        const response = await fetch(`https://hook.us2.make.com/1bs3fr8ptb8uku2aw6rcdfnrdvudbewe?code=${inviteCode}`, {
+            method: "GET", // o POST según tu API
+            headers: { "Content-Type": "application/json" }
+        });
 
-    //     const data = await response.json();
+        const data = await response.json();
+        console.log(data)
 
-    //     if (!response.ok || !data.valido) {
-    //         // Si el código no es válido, redirigir al callback (o mostrar Not Found)
-    //         window.location.href = "callback.html";
-    //         return;
-    //     }
+        if (!response.ok || !data.row) {
+            // Si el código no es válido, redirigir al callback (o mostrar Not Found)
+            window.location.href = "callback.html";
+            return;
+        }
 
-    //     // 4. Si es válido, personalizamos la invitación con los datos del invitado
-    //     document.getElementById("nombre-invitado").textContent = data.nombreInvitado;
+        Object.assign(invitedData, data)
 
-    // } catch (error) {
-    //     console.error("Error al validar el código:", error);
-    //     window.location.href = "callback.html";
-    // }
+        // 4. Si es válido, personalizamos la invitación con los datos del invitado
+        // document.getElementById("nombre-invitado").textContent = data.name;
 
-    // // Manejo de la confirmación de asistencia (RSVP)
-    // const rsvpForm = document.getElementById("rsvp-form");
-    // if (rsvpForm) {
-    //     rsvpForm.addEventListener("submit", async (e) => {
-    //         e.preventDefault();
-    //         // Lógica para enviar asistencia con fetch/axios y luego...
-    //         // Redirigir opcionalmente al formulario:
-    //         window.location.href = `formulario.html?code=${inviteCode}`;
-    //     });
-    // }
+    } catch (error) {
+        console.error("Error al validar el código:", error);
+        window.location.href = "callback.html";
+    }
+
+    // Manejo de la confirmación de asistencia (RSVP)
+    const rsvpForm = document.getElementById("rsvp-button");
+    if (rsvpForm) {
+        rsvpForm.addEventListener("click", async (e) => {
+            e.preventDefault();
+            try {
+              const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${inviteCode}&row=${invitedData.row}&accept=true`, {
+                  method: "GET", // o POST según tu API
+                  headers: { "Content-Type": "application/json" }
+              });
+
+              const data = await response.json();
+              console.log(data)
+            } catch (error) {
+              console.error("Error al confirmar asistencia:", error);
+            }
+            // Lógica para enviar asistencia con fetch/axios y luego...
+            // Redirigir opcionalmente al formulario:
+            // window.location.href = `formulario.html?code=${inviteCode}`;
+        });
+    }
 });
 
 // Número de WhatsApp para recibir confirmaciones (código de país + número, sin "+").
@@ -486,13 +502,13 @@ document.getElementById('location-button').addEventListener('click', e => {
   window.open(DESKTOP_MAPS_URL, '_blank', 'noopener');
 });
 
-/* ---------- Confirmación de asistencia ---------- */
-document.getElementById('rsvp-button').addEventListener('click', e => {
-  burst(...centerOf(e.currentTarget));
-  zoomPast(e.currentTarget);
-  if (RSVP_WHATSAPP) {
-    window.open(`https://wa.me/${RSVP_WHATSAPP}?text=${encodeURIComponent(RSVP_MESSAGE)}`, '_blank', 'noopener');
-  } else if (!openDialog(document.getElementById('rsvp-dialog'))) {
-    alert('¡Lugar en la parrilla asegurado! Gracias por confirmar.');
-  }
-});
+// /* ---------- Confirmación de asistencia ---------- */
+// document.getElementById('rsvp-button').addEventListener('click', e => {
+//   burst(...centerOf(e.currentTarget));
+//   zoomPast(e.currentTarget);
+//   if (RSVP_WHATSAPP) {
+//     window.open(`https://wa.me/${RSVP_WHATSAPP}?text=${encodeURIComponent(RSVP_MESSAGE)}`, '_blank', 'noopener');
+//   } else if (!openDialog(document.getElementById('rsvp-dialog'))) {
+//     alert('¡Lugar en la parrilla asegurado! Gracias por confirmar.');
+//   }
+// });
