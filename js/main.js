@@ -1,4 +1,18 @@
 // Validación del código de invitación
+// Desactiva este modo temporal para volver a consultar el API real.
+const USE_TEMPORARY_API_RESPONSE = false;
+const TEMPORARY_API_RESPONSE = {
+    row: 2,
+    code: "TESTPPP",
+    name: "Fam. Clarck Smith",
+    phone: "8888888",
+    adult: 5,
+    child: 1,
+    guests: 6,
+    confirmation: "",
+    comments: ""
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el parámetro 'c0d3' de la URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -6,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const invitedData = {}
 
     // 2. Si no hay código en la URL, redirigir a la página callback
-    if (!inviteCode) {
+    if (!inviteCode && !USE_TEMPORARY_API_RESPONSE) {
         console.error('Sin codigo de invitación')
         window.location.href = "callback.html";
         return;
@@ -14,11 +28,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. Validar el código con el API externo
     try {
-        const response = await fetch(`https://hook.us2.make.com/1bs3fr8ptb8uku2aw6rcdfnrdvudbewe?code=${inviteCode}`, {
-            method: "GET", // o POST según tu API
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = USE_TEMPORARY_API_RESPONSE
+            ? { ok: true, json: async () => TEMPORARY_API_RESPONSE }
+            : await fetch(`https://hook.us2.make.com/1bs3fr8ptb8uku2aw6rcdfnrdvudbewe?code=${inviteCode}`, {
+                method: "GET", // o POST según tu API
+                headers: { "Content-Type": "application/json" }
+            });
 
+        // Capturamos los datos del invitado devueltos por la API.
         const data = await response.json();
         console.log(data)
 
@@ -30,8 +47,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         Object.assign(invitedData, data)
 
-        // 4. Si es válido, personalizamos la invitación con los datos del invitado
-        // document.getElementById("nombre-invitado").textContent = data.name;
+        console.log("Datos del invitado validados:", invitedData);
+
+        // Actualizamos el saludo en el DOM con el nombre del invitado validado.
+        const guestName = typeof invitedData.name === "string" ? invitedData.name.trim() : "";
+        document.getElementById("guest-greeting").innerHTML = guestName
+            ? `${guestName} <br> ¡Ven y celebra conmigo!`
+            : "¡Estás invitado a mi fiesta!";
 
     } catch (error) {
         console.error("Error al validar el código:", error);
@@ -43,6 +65,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (rsvpForm) {
         rsvpForm.addEventListener("click", async (e) => {
             e.preventDefault();
+            if (USE_TEMPORARY_API_RESPONSE) {
+                console.info("La confirmación está deshabilitada mientras se usa la respuesta simulada.");
+                return;
+            }
+
             try {
               const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${inviteCode}&row=${invitedData.row}&accept=true`, {
                   method: "GET", // o POST según tu API
