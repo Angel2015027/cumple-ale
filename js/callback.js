@@ -3,32 +3,36 @@ const codeForm = document.getElementById("code-form");
 const codeInput = document.getElementById("code-input");
 const formView = document.getElementById("form-view");
 const notFoundView = document.getElementById("not-found-view");
+const submitButton = codeForm.querySelector('[type="submit"]');
 
-// API Integration Placeholder: punto de entrada para integrar una API.
-function sendCodeToApi(code) {
-  // Implementa aquí la llamada HTTP cuando la API esté disponible.
-  // Por ejemplo, usa fetch("https://tu-api.com/endpoint", { ... })
-  // y envía `code` en el cuerpo de la solicitud.
-  // Esta función no realiza ninguna petición por ahora.
-  console.log("Código listo para enviar:", code);
+async function validateAndOpenInvitation(code) {
+  try {
+    const invitation = await InvitationApi.validateCode(code);
+    if (!invitation) {
+      formView.hidden = true;
+      notFoundView.hidden = false;
+      document.title = "404 - Page Not Found";
+      return;
+    }
 
-  if (code === 'p01') {
-    window.location.href = `index.html?c0d3=${code}`;
-    return;
+    const invitationUrl = new URL("index.html", window.location.href);
+    invitationUrl.searchParams.set("c0d3", invitation.code);
+    window.location.href = invitationUrl.toString();
+  } catch (error) {
+    console.error("Error al validar el código:", error);
+    formView.hidden = true;
+    notFoundView.hidden = false;
+    document.title = "404 - Page Not Found";
   }
-
-  formView.hidden = true;
-  notFoundView.hidden = false;
-  document.title = "404 - Page Not Found";
 }
 
-// Form Submission Logic: captura el código y evita el envío tradicional.
-function handleFormSubmission(event) {
+async function handleFormSubmission(event) {
   event.preventDefault();
 
   const code = codeInput.value.trim();
-  sendCodeToApi(code);
+  submitButton.disabled = true;
+  await validateAndOpenInvitation(code);
+  submitButton.disabled = false;
 }
 
-// Event Listeners: escucha el envío tanto del botón como de Enter.
 codeForm.addEventListener("submit", handleFormSubmission);

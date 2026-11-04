@@ -571,16 +571,13 @@ async function saveAttendance(accepted) {
             accept: accepted
         }).toString();
         const response = await fetch(requestUrl, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
+            method: "GET"
         });
 
         if (!response.ok) {
             const action = accepted ? "confirmar asistencia" : "registrar la negativa";
             throw new Error(`Error HTTP al ${action}: ${response.status}`);
         }
-
-        console.log(await response.json());
         return true;
     } catch (error) {
         invitedData.confirmation = previousConfirmation;

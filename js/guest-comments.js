@@ -49,7 +49,7 @@ commentForm.addEventListener("submit", async event => {
 
     submitButton.disabled = true;
     try {
-        const response = await fetch("https://hook.us2.make.com/t8wkp22fhvtnwqpiwi4s76gzqdqzc271", {
+        const response = await fetch("https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
             body: payload
