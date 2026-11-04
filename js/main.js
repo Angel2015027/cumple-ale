@@ -34,6 +34,7 @@ const texts = {
         closingMessage: "Espero contar con ustedes",
         rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ustedes!"
     }
+
 };
 const invitedData = {}
 
@@ -69,6 +70,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         Object.assign(invitedData, data)
 
         console.log("Datos del invitado validados:", invitedData);
+
+        const confirmationStatus = typeof invitedData.confirmation === "string"
+            ? invitedData.confirmation.trim().toLowerCase()
+            : invitedData.confirmation === true
+                ? "true"
+                : invitedData.confirmation === false
+                    ? "false"
+                    : "";
+        const isConfirmed = confirmationStatus === "true";
+        const isDeclined = confirmationStatus === "false";
+        if (isConfirmed) {
+            document.getElementById("rsvp-button").disabled = true;
+            document.getElementById("rsvp-button-label").textContent = "Asistencia Confirmada";
+
+            const commentsUrl = new URL("extra-form.html", window.location.href);
+            commentsUrl.searchParams.set("c0d3", inviteCode);
+            const commentButton = document.getElementById("comment-button");
+            commentButton.href = commentsUrl.toString();
+            commentButton.hidden = false;
+        }
+
+        const declineButton = document.getElementById("decline-button");
+        declineButton.hidden = isConfirmed
+            || (confirmationStatus !== "" && !isDeclined);
+        declineButton.disabled = isDeclined;
 
         // Adaptamos los textos de la invitación según la cantidad de invitados.
         const isPlural = Number(invitedData.guests) > 1;
@@ -529,7 +555,7 @@ if (rsvpForm) {
             console.info("La confirmación está deshabilitada mientras se usa la respuesta simulada.");
         } else {
           try {
-            const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${inviteCode}&row=${invitedData.row}&accept=true`, {
+            const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${invitedData.code}&row=${invitedData.row}&accept=true`, {
                 method: "GET", // o POST según tu API
                 headers: { "Content-Type": "application/json" }
             });
@@ -548,5 +574,37 @@ if (rsvpForm) {
         // Lógica para enviar asistencia con fetch/axios y luego...
         // Redirigir opcionalmente al formulario:
         // window.location.href = `formulario.html?code=${inviteCode}`;
+    });
+}
+
+const declineButton = document.getElementById("decline-button");
+if (declineButton) {
+    declineButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+        // burst(...centerOf(e.currentTarget));
+        // zoomPast(e.currentTarget);
+
+        if (USE_TEMPORARY_API_RESPONSE) {
+            console.info("La negativa está deshabilitada mientras se usa la respuesta simulada.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${encodeURIComponent(invitedData.code)}&row=${invitedData.row}&accept=false`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP al registrar la negativa: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            invitedData.confirmation = false;
+            declineButton.disabled = true;
+        } catch (error) {
+            console.error("Error al registrar que no podrá asistir:", error);
+        }
     });
 }
