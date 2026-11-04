@@ -13,11 +13,34 @@ const TEMPORARY_API_RESPONSE = {
     comments: ""
 };
 
+const texts = {
+    sing: {
+        inviteBadge: "¡Acelera a fondo, estás invitado a mi cumpleaños!",
+        welcomeWithName: "¡Ven y celebra conmigo!",
+        welcomeWithoutName: "¡Estás invitado a mi fiesta!",
+        invitationCopy: "Ven a acelerar y divertirte conmigo en una tarde llena de risas, diversión y mucha alegría.",
+        rsvpHeading: "¡No te pierdas esta divertida celebración!",
+        rsvpCopy: "Por favor confirma tu asistencia antes del 10 de noviembre.",
+        closingMessage: "Espero contar con tu presencia",
+        rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ti!"
+    },
+    plu: {
+        inviteBadge: "¡Aceleren a fondo, están invitados a mi cumpleaños!",
+        welcomeWithName: "¡Vengan y celebren conmigo!",
+        welcomeWithoutName: "¡Están invitados a mi fiesta!",
+        invitationCopy: "Vengan a acelerar y divertirse conmigo en una tarde llena de risas, diversión y mucha alegría.",
+        rsvpHeading: "¡No se pierdan esta divertida celebración!",
+        rsvpCopy: "Por favor confirmen su asistencia antes del 10 de noviembre.",
+        closingMessage: "Espero contar con ustedes",
+        rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ustedes!"
+    }
+};
+const invitedData = {}
+
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el parámetro 'c0d3' de la URL
     const urlParams = new URLSearchParams(window.location.search);
     const inviteCode = urlParams.get("c0d3");
-    const invitedData = {}
 
     // 2. Si no hay código en la URL, redirigir a la página callback
     if (!inviteCode && !USE_TEMPORARY_API_RESPONSE) {
@@ -37,8 +60,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Capturamos los datos del invitado devueltos por la API.
         const data = await response.json();
-        console.log(data)
-
         if (!response.ok || !data.row) {
             // Si el código no es válido, redirigir al callback (o mostrar Not Found)
             window.location.href = "callback.html";
@@ -49,42 +70,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         console.log("Datos del invitado validados:", invitedData);
 
-        // Actualizamos el saludo en el DOM con el nombre del invitado validado.
+        // Adaptamos los textos de la invitación según la cantidad de invitados.
+        const isPlural = Number(invitedData.guests) > 1;
+        const textidx = isPlural ? "plu" : "sing";
         const guestName = typeof invitedData.name === "string" ? invitedData.name.trim() : "";
-        document.getElementById("guest-greeting").innerHTML = guestName
-            ? `${guestName} <br> ¡Ven y celebra conmigo!`
-            : "¡Estás invitado a mi fiesta!";
+        document.getElementById("guest-name").textContent = guestName;
+        document.getElementById("guest-name-break").hidden = !guestName;
+        document.getElementById("guest-welcome").textContent = guestName
+            ? texts[textidx].welcomeWithName
+            : texts[textidx].welcomeWithoutName;
+        document.getElementById("invite-badge").textContent = texts[textidx].inviteBadge;
+        document.getElementById("invitation-copy").textContent = texts[textidx].invitationCopy;
+        document.getElementById("rsvp-heading").textContent = texts[textidx].rsvpHeading;
+        document.getElementById("rsvp-copy").textContent = texts[textidx].rsvpCopy;
+        document.getElementById("closing-message").textContent = texts[textidx].closingMessage;
+        document.getElementById("rsvp-confirmation").textContent = texts[textidx].rsvpConfirmation;
 
     } catch (error) {
         console.error("Error al validar el código:", error);
         window.location.href = "callback.html";
-    }
-
-    // Manejo de la confirmación de asistencia (RSVP)
-    const rsvpForm = document.getElementById("rsvp-button");
-    if (rsvpForm) {
-        rsvpForm.addEventListener("click", async (e) => {
-            e.preventDefault();
-            if (USE_TEMPORARY_API_RESPONSE) {
-                console.info("La confirmación está deshabilitada mientras se usa la respuesta simulada.");
-                return;
-            }
-
-            try {
-              const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${inviteCode}&row=${invitedData.row}&accept=true`, {
-                  method: "GET", // o POST según tu API
-                  headers: { "Content-Type": "application/json" }
-              });
-
-              const data = await response.json();
-              console.log(data)
-            } catch (error) {
-              console.error("Error al confirmar asistencia:", error);
-            }
-            // Lógica para enviar asistencia con fetch/axios y luego...
-            // Redirigir opcionalmente al formulario:
-            // window.location.href = `formulario.html?code=${inviteCode}`;
-        });
     }
 });
 
@@ -512,3 +516,37 @@ document.getElementById('location-button').addEventListener('click', e => {
 //     alert('¡Lugar en la parrilla asegurado! Gracias por confirmar.');
 //   }
 // });
+
+// Manejo de la confirmación de asistencia (RSVP)
+const rsvpForm = document.getElementById("rsvp-button");
+if (rsvpForm) {
+    rsvpForm.addEventListener("click", async (e) => {
+        e.preventDefault();
+        burst(...centerOf(e.currentTarget));
+        zoomPast(e.currentTarget);
+
+        if (USE_TEMPORARY_API_RESPONSE) {
+            console.info("La confirmación está deshabilitada mientras se usa la respuesta simulada.");
+        } else {
+          try {
+            const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${inviteCode}&row=${invitedData.row}&accept=true`, {
+                method: "GET", // o POST según tu API
+                headers: { "Content-Type": "application/json" }
+            });
+  
+            const data = await response.json();
+            console.log(data)
+          } catch (error) {
+            console.error("Error al confirmar asistencia:", error);
+          }
+        }
+
+        if (!openDialog(document.getElementById('rsvp-dialog'))) {
+          alert('¡Lugar en la parrilla asegurado! Gracias por confirmar.');
+        }
+
+        // Lógica para enviar asistencia con fetch/axios y luego...
+        // Redirigir opcionalmente al formulario:
+        // window.location.href = `formulario.html?code=${inviteCode}`;
+    });
+}
