@@ -1,6 +1,6 @@
 // Validación del código de invitación
 // Desactiva este modo temporal para volver a consultar el API real.
-const USE_TEMPORARY_API_RESPONSE = false;
+const USE_TEMPORARY_API_RESPONSE = true;
 const TEMPORARY_API_RESPONSE = {
     row: 2,
     code: "TESTPPP",
@@ -22,7 +22,8 @@ const texts = {
         rsvpHeading: "¡No te pierdas esta divertida celebración!",
         rsvpCopy: "Por favor confirma tu asistencia antes del 10 de noviembre.",
         closingMessage: "Espero contar con tu presencia",
-        rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ti!"
+        rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ti!",
+        declineConfirmation: "Lamentamos que no puedas acompañarnos; esperamos compartir contigo muy pronto. ¡Te mandamos un abrazo a la distancia!"
     },
     plu: {
         inviteBadge: "¡Aceleren a fondo, están invitados a mi cumpleaños!",
@@ -32,7 +33,8 @@ const texts = {
         rsvpHeading: "¡No se pierdan esta divertida celebración!",
         rsvpCopy: "Por favor confirmen su asistencia antes del 10 de noviembre.",
         closingMessage: "Espero contar con ustedes",
-        rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ustedes!"
+        rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ustedes!",
+        declineConfirmation: "Lamentamos que no puedan acompañarnos; esperamos compartir con ustedes muy pronto. ¡Les mandamos un abrazo a la distancia!"
     }
 
 };
@@ -592,13 +594,11 @@ if (rsvpForm) {
           }
         }
 
+        document.getElementById("rsvp-title").textContent = "¡Lugar en la parrilla asegurado!";
+        document.getElementById("rsvp-confirmation").textContent = texts[Number(invitedData.guests) > 1 ? "plu" : "sing"].rsvpConfirmation;
         if (!openDialog(document.getElementById('rsvp-dialog'))) {
           alert('¡Lugar en la parrilla asegurado! Gracias por confirmar.');
         }
-
-        // Lógica para enviar asistencia con fetch/axios y luego...
-        // Redirigir opcionalmente al formulario:
-        // window.location.href = `formulario.html?code=${inviteCode}`;
     });
 }
 
@@ -608,28 +608,35 @@ if (declineButton) {
         e.preventDefault();
         // burst(...centerOf(e.currentTarget));
         // zoomPast(e.currentTarget);
+        const textidx = Number(invitedData.guests) > 1 ? "plu" : "sing";
 
         if (USE_TEMPORARY_API_RESPONSE) {
             console.info("La negativa está deshabilitada mientras se usa la respuesta simulada.");
-            return;
+        } else {
+            try {
+                const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${encodeURIComponent(invitedData.code)}&row=${invitedData.row}&accept=false`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP al registrar la negativa: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(data);
+                invitedData.confirmation = false;
+                declineButton.disabled = true;
+            } catch (error) {
+                console.error("Error al registrar que no podrá asistir:", error);
+                return;
+            }
         }
 
-        try {
-            const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${encodeURIComponent(invitedData.code)}&row=${invitedData.row}&accept=false`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error HTTP al registrar la negativa: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log(data);
-            invitedData.confirmation = false;
-            declineButton.disabled = true;
-        } catch (error) {
-            console.error("Error al registrar que no podrá asistir:", error);
+        document.getElementById("rsvp-title").textContent = "¡Gracias por avisarnos!";
+        document.getElementById("rsvp-confirmation").textContent = texts[textidx].declineConfirmation;
+        if (!openDialog(document.getElementById("rsvp-dialog"))) {
+            alert(texts[textidx].declineConfirmation);
         }
     });
 }
