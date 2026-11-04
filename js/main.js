@@ -112,6 +112,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("closing-message").textContent = texts[textidx].closingMessage;
         document.getElementById("rsvp-confirmation").textContent = texts[textidx].rsvpConfirmation;
 
+        const getGuestCount = value => {
+            if (typeof value === "string" && value.trim() === "") return null;
+            if (typeof value !== "number" && typeof value !== "string") return null;
+            const count = Number(value);
+            return Number.isInteger(count) && count >= 0 ? count : null;
+        };
+        const adultCount = getGuestCount(invitedData.adult);
+        const childCount = getGuestCount(invitedData.child);
+        const adultCountCard = document.getElementById("adult-count-card");
+        const childCountCard = document.getElementById("child-count-card");
+
+        if (adultCount !== null) {
+            document.getElementById("adult-count").textContent = adultCount;
+            document.getElementById("adult-count-label").textContent = adultCount === 1 ? "adulto" : "adultos";
+            adultCountCard.hidden = false;
+        }
+
+        if (childCount !== null && childCount > 0) {
+            document.getElementById("child-count").textContent = childCount;
+            document.getElementById("child-count-label").textContent = childCount === 1 ? "niño" : "niños";
+            childCountCard.hidden = false;
+        }
+
+        document.getElementById("guest-counts").hidden = adultCount === null && !(childCount > 0);
+
     } catch (error) {
         console.error("Error al validar el código:", error);
         window.location.href = "callback.html";
