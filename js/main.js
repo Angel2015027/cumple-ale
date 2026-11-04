@@ -1,18 +1,4 @@
 // Validación del código de invitación
-// Desactiva este modo temporal para volver a consultar el API real.
-const USE_TEMPORARY_API_RESPONSE = false;
-const TEMPORARY_API_RESPONSE = {
-    row: 2,
-    code: "TESTPPP",
-    name: "Fam. Clarck Smith",
-    phone: "8888888",
-    adult: 5,
-    child: 1,
-    guests: 6,
-    confirmation: "",
-    comments: ""
-};
-
 const texts = {
     sing: {
         inviteBadge: "¡Acelera a fondo, estás invitado a mi cumpleaños!",
@@ -83,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const inviteCode = urlParams.get("c0d3");
 
     // 2. Si no hay código en la URL, redirigir a la página callback
-    if (!inviteCode && !USE_TEMPORARY_API_RESPONSE) {
+    if (!inviteCode && !InvitationApi.useTemporaryResponse) {
         console.error('Sin codigo de invitación')
         window.location.href = "callback.html";
         return;
@@ -91,18 +77,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. Validar el código con el API externo
     try {
-        const requestUrl = new URL("https://hook.us2.make.com/1bs3fr8ptb8uku2aw6rcdfnrdvudbewe");
-        requestUrl.searchParams.set("code", inviteCode);
-        const response = USE_TEMPORARY_API_RESPONSE
-            ? { ok: true, json: async () => TEMPORARY_API_RESPONSE }
-            : await fetch(requestUrl, {
-                method: "GET", // o POST según tu API
-                headers: { "Content-Type": "application/json" }
-            });
-
-        // Capturamos los datos del invitado devueltos por la API.
-        const data = await response.json();
-        if (!response.ok || !data.row) {
+        const data = await InvitationApi.validateCode(inviteCode);
+        if (!data) {
             // Si el código no es válido, redirigir al callback (o mostrar Not Found)
             window.location.href = "callback.html";
             return;
@@ -112,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         console.log("Datos del invitado validados:", invitedData);
 
-        updateRsvpUI(inviteCode);
+        updateRsvpUI(invitedData.code);
 
         // Adaptamos los textos de la invitación según la cantidad de invitados.
         const textidx = Number(invitedData.guests) > 1 ? "plu" : "sing";
