@@ -1,6 +1,6 @@
 // Validación del código de invitación
 // Desactiva este modo temporal para volver a consultar el API real.
-const USE_TEMPORARY_API_RESPONSE = true;
+const USE_TEMPORARY_API_RESPONSE = false;
 const TEMPORARY_API_RESPONSE = {
     row: 2,
     code: "TESTPPP",
@@ -38,7 +38,44 @@ const texts = {
     }
 
 };
-const invitedData = {}
+const invitedData = {};
+
+const getGuestCount = value => {
+    if (typeof value === "string" && value.trim() === "") return null;
+    if (typeof value !== "number" && typeof value !== "string") return null;
+    const count = Number(value);
+    return Number.isInteger(count) && count >= 0 ? count : null;
+};
+
+function updateRsvpUI(inviteCode) {
+    const confirmationStatus = typeof invitedData.confirmation === "string"
+        ? invitedData.confirmation.trim().toLowerCase()
+        : invitedData.confirmation === true
+            ? "true"
+            : invitedData.confirmation === false
+                ? "false"
+                : "";
+    const isConfirmed = confirmationStatus === "true";
+    const isDeclined = confirmationStatus === "false";
+
+    document.getElementById("rsvp-button").disabled = isConfirmed;
+    document.getElementById("rsvp-button-label").textContent = isConfirmed
+        ? "Asistencia Confirmada"
+        : "Confirmar asistencia";
+
+    const commentButton = document.getElementById("comment-button");
+    if (isConfirmed) {
+        const commentsUrl = new URL("extra-form.html", window.location.href);
+        commentsUrl.searchParams.set("c0d3", inviteCode);
+        commentButton.href = commentsUrl.toString();
+    }
+    commentButton.hidden = !isConfirmed;
+
+    const declineButton = document.getElementById("decline-button");
+    declineButton.hidden = isConfirmed
+        || (confirmationStatus !== "" && !isDeclined);
+    declineButton.disabled = isDeclined;
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Obtener el parámetro 'c0d3' de la URL
@@ -54,9 +91,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. Validar el código con el API externo
     try {
+        const requestUrl = new URL("https://hook.us2.make.com/1bs3fr8ptb8uku2aw6rcdfnrdvudbewe");
+        requestUrl.searchParams.set("code", inviteCode);
         const response = USE_TEMPORARY_API_RESPONSE
             ? { ok: true, json: async () => TEMPORARY_API_RESPONSE }
-            : await fetch(`https://hook.us2.make.com/1bs3fr8ptb8uku2aw6rcdfnrdvudbewe?code=${inviteCode}`, {
+            : await fetch(requestUrl, {
                 method: "GET", // o POST según tu API
                 headers: { "Content-Type": "application/json" }
             });
@@ -69,57 +108,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        Object.assign(invitedData, data)
+        Object.assign(invitedData, data);
 
         console.log("Datos del invitado validados:", invitedData);
 
-        const confirmationStatus = typeof invitedData.confirmation === "string"
-            ? invitedData.confirmation.trim().toLowerCase()
-            : invitedData.confirmation === true
-                ? "true"
-                : invitedData.confirmation === false
-                    ? "false"
-                    : "";
-        const isConfirmed = confirmationStatus === "true";
-        const isDeclined = confirmationStatus === "false";
-        if (isConfirmed) {
-            document.getElementById("rsvp-button").disabled = true;
-            document.getElementById("rsvp-button-label").textContent = "Asistencia Confirmada";
-
-            const commentsUrl = new URL("extra-form.html", window.location.href);
-            commentsUrl.searchParams.set("c0d3", inviteCode);
-            const commentButton = document.getElementById("comment-button");
-            commentButton.href = commentsUrl.toString();
-            commentButton.hidden = false;
-        }
-
-        const declineButton = document.getElementById("decline-button");
-        declineButton.hidden = isConfirmed
-            || (confirmationStatus !== "" && !isDeclined);
-        declineButton.disabled = isDeclined;
+        updateRsvpUI(inviteCode);
 
         // Adaptamos los textos de la invitación según la cantidad de invitados.
-        const isPlural = Number(invitedData.guests) > 1;
-        const textidx = isPlural ? "plu" : "sing";
+        const textidx = Number(invitedData.guests) > 1 ? "plu" : "sing";
         const guestName = typeof invitedData.name === "string" ? invitedData.name.trim() : "";
         document.getElementById("guest-name").textContent = guestName;
         document.getElementById("guest-name-break").hidden = !guestName;
         document.getElementById("guest-welcome").textContent = guestName
             ? texts[textidx].welcomeWithName
             : texts[textidx].welcomeWithoutName;
-        document.getElementById("invite-badge").textContent = texts[textidx].inviteBadge;
-        document.getElementById("invitation-copy").textContent = texts[textidx].invitationCopy;
-        document.getElementById("rsvp-heading").textContent = texts[textidx].rsvpHeading;
-        document.getElementById("rsvp-copy").textContent = texts[textidx].rsvpCopy;
-        document.getElementById("closing-message").textContent = texts[textidx].closingMessage;
-        document.getElementById("rsvp-confirmation").textContent = texts[textidx].rsvpConfirmation;
-
-        const getGuestCount = value => {
-            if (typeof value === "string" && value.trim() === "") return null;
-            if (typeof value !== "number" && typeof value !== "string") return null;
-            const count = Number(value);
-            return Number.isInteger(count) && count >= 0 ? count : null;
+        const textElements = {
+            "invite-badge": "inviteBadge",
+            "invitation-copy": "invitationCopy",
+            "rsvp-heading": "rsvpHeading",
+            "rsvp-copy": "rsvpCopy",
+            "closing-message": "closingMessage",
+            "rsvp-confirmation": "rsvpConfirmation"
         };
+        Object.entries(textElements).forEach(([id, key]) => {
+            document.getElementById(id).textContent = texts[textidx][key];
+        });
+
         const adultCount = getGuestCount(invitedData.adult);
         const childCount = getGuestCount(invitedData.child);
         const adultCountCard = document.getElementById("adult-count-card");
@@ -145,11 +159,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// Número de WhatsApp para recibir confirmaciones (código de país + número, sin "+").
-// Si se deja vacío, el botón muestra un mensaje de agradecimiento.
-const RSVP_WHATSAPP = '';
-const RSVP_MESSAGE = '¡Hola! Confirmo mi asistencia a la carrera de cumpleaños de Alejandro el domingo 22 de noviembre a las 3:00 PM. 🏁';
 const DESKTOP_MAPS_URL = 'https://maps.app.goo.gl/tpK1xGdTqgEz1wPb7';
+const RSVP_ENDPOINT = 'https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o';
 
 document.documentElement.classList.add('js');
 const animate = typeof anime === 'function';
@@ -345,18 +356,25 @@ function rippleBunting() {
   });
 }
 
+function spawnForScrollTravel(distance, step, travel, activeCount, limit, spawn) {
+  const total = travel + distance;
+  const triggers = Math.max(0, Math.ceil(total / step) - 1);
+  const availableSlots = Math.max(0, limit - activeCount);
+  for (let i = 0; i < Math.min(triggers, availableSlots); i++) spawn();
+  return total - triggers * step;
+}
+
 let lastY = scrollY, carTravel = 0, lineTravel = 0, sparkTravel = 0, balloonTravel = 0;
 addEventListener('scroll', () => {
   requestParallax();
   const delta = Math.abs(scrollY - lastY);
   lastY = scrollY;
-  carTravel += delta; lineTravel += delta; sparkTravel += delta; balloonTravel += delta;
   if (delta > 4) rippleBunting();
   const lineStep = lite ? 110 : 45;
-  while (lineTravel > lineStep) { lineTravel -= lineStep; spawnSpeedLine(); }
-  while (sparkTravel > 110) { sparkTravel -= 110; spawnSpark(); }
-  while (carTravel > 200) { carTravel -= 200; spawnRunner(); }
-  while (balloonTravel > 180) { balloonTravel -= 180; spawnBalloon(); }
+  lineTravel = spawnForScrollTravel(delta, lineStep, lineTravel, lineCount, animate && !calm ? (lite ? 6 : 15) : 0, spawnSpeedLine);
+  sparkTravel = spawnForScrollTravel(delta, 110, sparkTravel, sparkCount, animate ? (calm ? 5 : lite ? 7 : 13) : 0, spawnSpark);
+  carTravel = spawnForScrollTravel(delta, 200, carTravel, runnerCount, animate ? (calm ? 4 : lite ? 5 : 9) : 0, spawnRunner);
+  balloonTravel = spawnForScrollTravel(delta, 180, balloonTravel, balloonCount, animate ? (calm ? 6 : lite ? 8 : 13) : 0, spawnBalloon);
 }, { passive: true });
 
 addEventListener('resize', () => { measureScroll(); requestParallax(); });
@@ -559,18 +577,46 @@ document.getElementById('location-button').addEventListener('click', e => {
   window.open(DESKTOP_MAPS_URL, '_blank', 'noopener');
 });
 
-// /* ---------- Confirmación de asistencia ---------- */
-// document.getElementById('rsvp-button').addEventListener('click', e => {
-//   burst(...centerOf(e.currentTarget));
-//   zoomPast(e.currentTarget);
-//   if (RSVP_WHATSAPP) {
-//     window.open(`https://wa.me/${RSVP_WHATSAPP}?text=${encodeURIComponent(RSVP_MESSAGE)}`, '_blank', 'noopener');
-//   } else if (!openDialog(document.getElementById('rsvp-dialog'))) {
-//     alert('¡Lugar en la parrilla asegurado! Gracias por confirmar.');
-//   }
-// });
+async function saveAttendance(accepted) {
+    const previousConfirmation = invitedData.confirmation;
+    invitedData.confirmation = accepted;
+    updateRsvpUI(invitedData.code);
 
-// Manejo de la confirmación de asistencia (RSVP)
+    if (USE_TEMPORARY_API_RESPONSE) {
+        console.info(`La ${accepted ? "confirmación" : "negativa"} está deshabilitada mientras se usa la respuesta simulada.`);
+        return true;
+    }
+
+    try {
+        const requestUrl = new URL(RSVP_ENDPOINT);
+        requestUrl.search = new URLSearchParams({
+            code: invitedData.code,
+            row: invitedData.row,
+            accept: accepted
+        }).toString();
+        const response = await fetch(requestUrl, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) {
+            const action = accepted ? "confirmar asistencia" : "registrar la negativa";
+            throw new Error(`Error HTTP al ${action}: ${response.status}`);
+        }
+
+        console.log(await response.json());
+        return true;
+    } catch (error) {
+        invitedData.confirmation = previousConfirmation;
+        updateRsvpUI(invitedData.code);
+        console.error(
+            accepted ? "Error al confirmar asistencia:" : "Error al registrar que no podrá asistir:",
+            error
+        );
+        return false;
+    }
+}
+
 const rsvpForm = document.getElementById("rsvp-button");
 if (rsvpForm) {
     rsvpForm.addEventListener("click", async (e) => {
@@ -578,21 +624,7 @@ if (rsvpForm) {
         burst(...centerOf(e.currentTarget));
         zoomPast(e.currentTarget);
 
-        if (USE_TEMPORARY_API_RESPONSE) {
-            console.info("La confirmación está deshabilitada mientras se usa la respuesta simulada.");
-        } else {
-          try {
-            const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${invitedData.code}&row=${invitedData.row}&accept=true`, {
-                method: "GET", // o POST según tu API
-                headers: { "Content-Type": "application/json" }
-            });
-  
-            const data = await response.json();
-            console.log(data)
-          } catch (error) {
-            console.error("Error al confirmar asistencia:", error);
-          }
-        }
+        if (!await saveAttendance(true)) return;
 
         document.getElementById("rsvp-title").textContent = "¡Lugar en la parrilla asegurado!";
         document.getElementById("rsvp-confirmation").textContent = texts[Number(invitedData.guests) > 1 ? "plu" : "sing"].rsvpConfirmation;
@@ -606,32 +638,8 @@ const declineButton = document.getElementById("decline-button");
 if (declineButton) {
     declineButton.addEventListener("click", async (e) => {
         e.preventDefault();
-        // burst(...centerOf(e.currentTarget));
-        // zoomPast(e.currentTarget);
         const textidx = Number(invitedData.guests) > 1 ? "plu" : "sing";
-
-        if (USE_TEMPORARY_API_RESPONSE) {
-            console.info("La negativa está deshabilitada mientras se usa la respuesta simulada.");
-        } else {
-            try {
-                const response = await fetch(`https://hook.us2.make.com/bauh3ixu02mj9locvgzfz1ruauosdp7o?code=${encodeURIComponent(invitedData.code)}&row=${invitedData.row}&accept=false`, {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error HTTP al registrar la negativa: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log(data);
-                invitedData.confirmation = false;
-                declineButton.disabled = true;
-            } catch (error) {
-                console.error("Error al registrar que no podrá asistir:", error);
-                return;
-            }
-        }
+        if (!await saveAttendance(false)) return;
 
         document.getElementById("rsvp-title").textContent = "¡Gracias por avisarnos!";
         document.getElementById("rsvp-confirmation").textContent = texts[textidx].declineConfirmation;
