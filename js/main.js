@@ -6,7 +6,7 @@ const texts = {
         welcomeWithoutName: "¡Estás invitado a mi fiesta!",
         invitationCopy: "Ven a acelerar y divertirte conmigo en una tarde llena de risas, diversión y mucha alegría.",
         rsvpHeading: "¡No te pierdas esta divertida celebración!",
-        rsvpCopy: "Por favor confirma tu asistencia antes del 10 de noviembre.",
+        rsvpCopy: "Por favor confirma tu asistencia antes del 15 de noviembre.",
         closingMessage: "Espero contar con tu presencia",
         rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ti!",
         declineConfirmation: "Lamentamos que no puedas acompañarnos; esperamos compartir contigo muy pronto. ¡Te mandamos un abrazo a la distancia!"
@@ -17,7 +17,7 @@ const texts = {
         welcomeWithoutName: "¡Están invitados a mi fiesta!",
         invitationCopy: "Vengan a acelerar y divertirse conmigo en una tarde llena de risas, diversión y mucha alegría.",
         rsvpHeading: "¡No se pierdan esta divertida celebración!",
-        rsvpCopy: "Por favor confirmen su asistencia antes del 10 de noviembre.",
+        rsvpCopy: "Por favor confirmen su asistencia antes del 15 de noviembre.",
         closingMessage: "Espero contar con ustedes",
         rsvpConfirmation: "Gracias por confirmar. ¡Alejandro está emocionado por festejar junto a ustedes!",
         declineConfirmation: "Lamentamos que no puedan acompañarnos; esperamos compartir con ustedes muy pronto. ¡Les mandamos un abrazo a la distancia!"
